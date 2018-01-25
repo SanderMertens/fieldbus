@@ -1,0 +1,10 @@
+{
+    "id": "driver/mnt/fieldbus",
+    "type": "package",
+    "value": {
+        "description": "Template package for fieldbus protocols",
+        "author": "Sander Mertens",
+        "version": "1.0.0",
+        "language": "c"
+    }
+}

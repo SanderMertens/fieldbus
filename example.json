@@ -1,0 +1,23 @@
+{
+    "id": "config/my_fieldbus_mount",
+    "type": "driver/mnt/fieldbus/mount",
+    "value": {
+        "address": "10.0.0.10",
+        "query.from": "data/my_fieldbus"
+    },
+    "scope": [{
+        "id": "generator_1",
+        "value": { "index": 100 },
+        "scope": [
+            {"id": "rpm", "type": "float32", "default": "2000", "offset": 0},
+            {"id": "temperature", "type": "float32", "unit": "units/celcius", "offset": 4}
+        ]
+    }, {
+        "id": "generator_2",
+        "value": { "index": 200 },
+        "scope": [
+            {"id": "rpm", "type": "float32", "default": "2000", "offset": 0},
+            {"id": "temperature", "type": "float32", "unit": "units/celcius", "offset": 4}
+        ]
+    }]
+}

@@ -1,0 +1,47 @@
+in package /driver/mnt/fieldbus
+
+// Forward declare mount class
+class mount
+
+// -- A register is a member with an index
+class register: member :/
+    offset: uint32  // Register offset relative to index
+
+// -- An instance groups registers and has an index
+class instance {
+    base = struct
+    options = {
+        defaultType = fieldbus/register  // Default to register type
+        parentType = mount               // Can only create instances in mount
+    }
+} :/
+    index: uint32  // Start of registers belonging to an instance
+
+// -- Helper type used in register_map for doing quick register lookups
+struct register_helper :/
+    instance: object             // Instance object that contains the value
+    type: lang/primitive         // Type of register (primitive only)
+    ptr: word                    // Pointer to the value inside the object
+
+// -- The mount connects to a device over a fieldbus protocol
+class mount {
+    base = vstore/mount
+    options = {
+        defaultType = fieldbus/instance
+    }
+} :/
+    // Constructor
+    int16 construct()
+
+    // Observe config changes in realtime
+    observer config_observer: define|update|delete|on_scope
+
+    // Simulate an incoming event from a fieldbus
+    void simulate_event(uint32 register, word binary_data)
+
+    // Public members
+    address: string // Information to connect to the fieldbus.
+                    // Type may vary depending on how fieldbus addressing works.
+
+    // Private members
+    register_map: map{uint32, register_helper}, private // O(log n) lookup for registers
