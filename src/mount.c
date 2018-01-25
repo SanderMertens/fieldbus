@@ -94,6 +94,9 @@ void remove_instance(
         return;
     }
 
+    /* Delete object */
+    corto_delete(data_object);
+
     /* Walk over members of instance and remove them from the register map of the
      * mount. Since registers can only be of primitive types, there is no need
      * for a more complex API, like corto_metawalk. */
