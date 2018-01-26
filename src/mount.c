@@ -10,11 +10,14 @@ void add_to_register_map(
     corto_type type,
     void *ptr)
 {
+    corto_trace("add register '%u' for '%s' of type '%s'",
+        key, corto_fullpath(NULL, instance), corto_fullpath(NULL, type));
+
     register_helper *el = corto_ptr_new(register_helper_o);
     corto_set_ref(&el->instance, instance);
     corto_set_ref(&el->type, type);
     el->ptr = (uintptr_t)ptr;
-    corto_rb_set(this->register_map, &key, el);
+    corto_rb_set(this->register_map, (void*)(uintptr_t)key, el);
 }
 
 static
@@ -22,8 +25,9 @@ void remove_from_register_map(
     fieldbus_mount this,
     uint64_t key)
 {
-    register_helper *el = corto_rb_remove(this->register_map, &key);
+    register_helper *el = corto_rb_remove(this->register_map, (void*)(uintptr_t)key);
     if (el) {
+        corto_trace("remove register '%u' for '%s' of type '%s'", key);
         corto_ptr_free(el, register_helper_o);
     }
 }
@@ -50,12 +54,17 @@ void add_instance(
         return;
     }
 
+    corto_trace("created data object '%s' of type '%s'",
+        corto_fullpath(NULL, data_object),
+        corto_fullpath(NULL, config));
+
     /* Walk over members of instance and add them to the register map of the
      * mount. Since registers can only be of primitive types, there is no need
      * for a more complex API, like corto_metawalk. */
     int i;
     for (i = 0; i < corto_interface(config)->members.length; i ++) {
         corto_member m = corto_interface(config)->members.buffer[i];
+
         /* If instance contains const, readonly or private members, do not add
          * those to the register map. */
         if (!(m->modifiers & (CORTO_CONST | CORTO_READONLY | CORTO_PRIVATE))) {
@@ -148,7 +157,6 @@ void fieldbus_mount_config_observer(
         /* Ignore */
         break;
     }
-
 }
 
 void fieldbus_mount_simulate_event(
@@ -165,12 +173,12 @@ void fieldbus_mount_simulate_event(
     uint32_t size = 0;
 
     /* Copy data into object */
-    switch(data->width) {
+    switch(el->type->width) {
     case CORTO_WIDTH_8: size = sizeof(int8_t); break;
     case CORTO_WIDTH_16: size = sizeof(int16_t); break;
     case CORTO_WIDTH_32: size = sizeof(int32_t); break;
     case CORTO_WIDTH_64: size = sizeof(int64_t); break;
-    case CORTO_WIDTH_PTR: size = sizeof(uintptr_t); break;
+    case CORTO_WIDTH_WORD: size = sizeof(uintptr_t); break;
         break;
     }
 
@@ -186,7 +194,7 @@ void fieldbus_mount_simulate_event(
         return;
     }
 
-    memcpy(el->ptr, binary_data, size);
+    memcpy((void*)el->ptr, (void*)binary_data, size);
 
     if (corto_update_end(el->instance)) {
         corto_throw(

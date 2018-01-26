@@ -4,7 +4,7 @@ in package /driver/mnt/fieldbus
 class mount
 
 // -- A register is a member with an index
-class register: member :/
+class register: lang/member, options = {parentState = declared} :/
     offset: uint32  // Register offset relative to index
 
 // -- An instance groups registers and has an index

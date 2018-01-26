@@ -1,15 +1,15 @@
 [{
-    "id": "config/my_fieldbus_mount/generator_3",
+    "id": "generator_3",
     "value": { "index": 300 },
     "scope": [
-        {"id": "rpm", "type": "float32", "default": "2000", "offset": 0},
-        {"id": "temperature", "type": "float32", "unit": "units/celcius", "offset": 4}
+        {"id": "rpm", "value": {"type": "float32", "default": "2000", "offset": 0}},
+        {"id": "temperature", "value": {"type": "float32", "unit": "units/celcius", "offset": 4}}
     ]
 }, {
-    "id": "config/my_fieldbus_mount/generator_4",
+    "id": "generator_4",
     "value": { "index": 400 },
     "scope": [
-        {"id": "rpm", "type": "float32", "default": "2000", "offset": 0},
-        {"id": "temperature", "type": "float32", "unit": "units/celcius", "offset": 4}
+        {"id": "rpm", "value": {"type": "float32", "default": "2000", "offset": 0}},
+        {"id": "temperature", "value": {"type": "float32", "unit": "units/celcius", "offset": 4}}
     ]
 }]
