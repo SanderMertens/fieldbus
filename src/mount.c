@@ -139,7 +139,7 @@ error:
 }
 
 void fieldbus_mount_config_observer(
-    corto_observerEvent *e)
+    corto_observer_event *e)
 {
     /* React to configuration changes */
     switch (e->event) {
